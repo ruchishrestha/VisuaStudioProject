@@ -26,6 +26,6 @@ namespace WebApplication4
 
         DataTable GetContactsList();
 
-        DataTable GetContactsDetail(int contactID);
+      
     }
 }
