@@ -51,7 +51,7 @@ namespace WebApplication4
             }
         }
 
-        public bool CreateOrganizationProfile(String userName, String passWord, String organizationName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture)
+        public bool CreateOrganizationProfile(String userName, String passWord, String organizationName, String registrationNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture)
         {
             try
             {
@@ -60,11 +60,12 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Insert into organizationUser (userName,pasword,organizationName,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,organizationPictureURL) values(@UserName,@Password,@OrganizationName,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@Latitude,@Longitude,@OrganizationPictureURL)";
+                String query = "Insert into organizationUser (userName,pasword,organizationName,registrationNo,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,organizationPictureURL) values(@UserName,@Password,@OrganizationName,@RegistrationNo,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@Latitude,@Longitude,@OrganizationPictureURL)";
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@Password", passWord);
                 command.Parameters.AddWithValue("@OrganizationName", organizationName);
+                command.Parameters.AddWithValue("@RegistrationNo", registrationNo);
                 command.Parameters.AddWithValue("@Address", aDdress);
                 command.Parameters.AddWithValue("@ContactNo", contactNo);
                 command.Parameters.AddWithValue("@MobileNo", mobileNo);
