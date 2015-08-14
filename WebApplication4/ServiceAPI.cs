@@ -41,7 +41,7 @@ namespace WebApplication4
                 command.Parameters.AddWithValue("@ProfilePictureURL", profilePicURL);
                 command.ExecuteNonQuery();
 
-                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@Usercategory)";
+                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@UserCategory)";
                 command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@Password", passWord);
@@ -84,7 +84,7 @@ namespace WebApplication4
                 command.Parameters.AddWithValue("@OrganizationPictureURL", organizationPicture);
                 command.ExecuteNonQuery();
 
-                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@Usercategory)";
+                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@UserCategory)";
                 command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@Password", passWord);
@@ -127,7 +127,7 @@ namespace WebApplication4
                 command.Parameters.AddWithValue("@ShopPictureURL", shopPictureURL);
                 command.ExecuteNonQuery();
 
-                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@Usercategory)";
+                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@UserCategory)";
                 command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@Password", passWord);
