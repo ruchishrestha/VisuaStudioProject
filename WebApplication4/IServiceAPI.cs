@@ -20,5 +20,9 @@ namespace WebApplication4
         DataTable GetSalesDetail();
 
         void DeleteSalesAd(String adid);
+
+        DataTable GetContactsList();
+
+        DataTable GetContactsDetail(int contactID);
     }
 }

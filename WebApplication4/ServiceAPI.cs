@@ -7,7 +7,7 @@ using System.Text;
 
 namespace WebApplication4
 {
-    public class ServiceAPI:IServiceAPI
+    public class ServiceAPI : IServiceAPI
     {
         SqlConnection dbConnection;
 
@@ -24,7 +24,7 @@ namespace WebApplication4
             }
 
             string query = "Insert into individual (username,pasword,fname,mname,lname,address1,contact,mobile,email,website) values(@UserName,@Pasword,@FName,@MName,@LName,@Address,@Contact,@Mobile,@Email,@Website,@photo)";
-           
+
             SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@UserName", username);
             command.Parameters.AddWithValue("@Pasword", pasword);
@@ -53,14 +53,14 @@ namespace WebApplication4
             string query = "SELECT pasword FROM allusers WHERE username= @username";
 
             SqlCommand command = new SqlCommand(query, dbConnection);
-            command.Parameters.AddWithValue("@username",userName);
+            command.Parameters.AddWithValue("@username", userName);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    auth = PasswordEncrytionService.ValidatePassword(pasword,reader["pasword"].ToString());
+                    auth = PasswordEncrytionService.ValidatePassword(pasword, reader["pasword"].ToString());
                 }
             }
 
@@ -82,7 +82,7 @@ namespace WebApplication4
             String query = "Insert into company (username,pasword,cname,address1,contact,mobile,email,website,latitude,longitude,photo) values(@UserName,@Pasword,@CName,@Address,@Contact,@Mobile,@Email,@Website,@Latitude,@Longitude,@Photo)";
             SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@UserName", username);
-            command.Parameters.AddWithValue("@Pasword",pasword);
+            command.Parameters.AddWithValue("@Pasword", pasword);
             command.Parameters.AddWithValue("@CName", cname);
             command.Parameters.AddWithValue("@Address", address1);
             command.Parameters.AddWithValue("@Contact", contact);
@@ -187,11 +187,79 @@ namespace WebApplication4
                 dbConnection.Open();
             }
             String query = "Delete from sales where adid=@adid";
-             SqlCommand command = new SqlCommand(query, dbConnection);
-            command.Parameters.AddWithValue("@adid",adid);
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", adid);
             command.ExecuteNonQuery();
             dbConnection.Close();
         }
 
+        public DataTable GetContactsList()
+        {
+            DataTable ContactsList = new DataTable();
+            ContactsList.Columns.Add(new DataColumn("contactID", typeof(int)));
+             ContactsList.Columns.Add(new DataColumn("contact_photo", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("username", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("title", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("addres", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("contact", typeof(String)));
+
+            
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query="Select contactID,contact_photo,username,title,addres,contact from contacts order by ad_insertdate desc";
+             SqlCommand command = new SqlCommand(query, dbConnection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    ContactsList.Rows.Add(reader["contactID"],reader["contact_photo"],reader["username"],reader["title"],reader["addres"],reader["contact"]);
+                }
+        }
+         reader.Close();
+            dbConnection.Close();
+            return ContactsList;
+    }
+
+        public DataTable GetContactsDetail(int contactID)
+        {
+             DataTable ContactsList = new DataTable();
+            ContactsList.Columns.Add(new DataColumn("contactID", typeof(int)));
+             ContactsList.Columns.Add(new DataColumn("contact_photo", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("username", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("title", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("addres", typeof(String)));
+             ContactsList.Columns.Add(new DataColumn("contact", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("ad_description", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("contactsCategory", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("email", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("latitude", typeof(Double)));
+            ContactsList.Columns.Add(new DataColumn("longitude", typeof(Double)));
+
+            
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+
+              String query="Select contactID,contact_photo,username,title,addres,contact,ad_description,contactsCategory,email,latitude,longitude from contacts";
+             SqlCommand command = new SqlCommand(query, dbConnection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    ContactsList.Rows.Add(reader["contactID"],reader["contact_photo"],reader["username"],reader["title"],reader["addres"],reader["contact"],reader["ad_description"],reader["contactsCategory"],reader["email"],reader["latitude"],reader["longitude"]);
+                }
+        }
+         reader.Close();
+            dbConnection.Close();
+            return ContactsList;
+
+        }
     }
 }
