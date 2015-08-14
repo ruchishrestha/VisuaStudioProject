@@ -94,11 +94,12 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Insert into shopUser (userName,pasword,shopName,panNo,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,shopPictureURL) values(@UserName,@Password,@ShopName,@PANNo,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@Latitude,@Longitude,@ShopPictureURL)";
+                String query = "Insert into shopUser (userName,pasword,shopName,panNo,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,shopPictureURL,shopOwner) values(@UserName,@Password,@ShopName,@PANNo,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@Latitude,@Longitude,@ShopPictureURL,@ShopOwner)";
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@Password", passWord);
                 command.Parameters.AddWithValue("@ShopName", shopName);
+                command.Parameters.AddWithValue("@ShopOwner", shopOwner);
                 command.Parameters.AddWithValue("@PANNo", panNo);
                 command.Parameters.AddWithValue("@Address", aDdress);
                 command.Parameters.AddWithValue("@ContactNo", contactNo);
