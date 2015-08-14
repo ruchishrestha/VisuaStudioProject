@@ -8,14 +8,17 @@ namespace WebApplication4
 {
     public interface IServiceAPI
     {
-        void CIndividualProfile(string username, string pasword, string fname, string mname, string lname, string address1, Int64 contact, Int64 mobile, string email, string website, byte[] profilePic);
-        bool UserAuthentication(string userName, string pasword);
+        bool CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePic);
+        
+        bool CreateOrganizationProfile(String userName, String passWord, String organizationName, String registrationNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture);
 
-        void CCompanyProfile(String username, String pasword, String cname, String address1, Int64 contact, Int64 mobile, String email, String website, float latitude, float longitude, byte[] photo);
+        bool CreateShopProfile(String userName, String passWord, String shopName, String shopOwner, String panNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String shopPictureURL);
 
-        void CShopProfile(String username, String pasword, String shpname, String panno, String address1, Int64 contact, Int64 mobile, String email, String website, float latitude, float longitude, byte[] photo);
+        String UserAuthentication(String userName, String passWord);
+        
+        DataTable GetUserDetail(String userName, String userCategory);
 
-        void PushAdstoSales(String adid, String username, String title, String ad_desc, String brand,Double price, String ad_stat, String condition, String timeused, Int64 contact);
+        void PushAdstoSales(String adid, String username, String title, String ad_desc, String brand, Double price, String ad_stat, String condition, String timeused, Int64 contact);
 
         DataTable GetSalesDetail();
 

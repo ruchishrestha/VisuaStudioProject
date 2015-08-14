@@ -16,111 +16,275 @@ namespace WebApplication4
             dbConnection = DBConnect.getConnection();
         }
 
-        public void CIndividualProfile(String username, String pasword, String fname, String mname, String lname, String address1, Int64 contact, Int64 mobile, String email, String website, byte[] profilePic)
+        public bool CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePicURL)
         {
-            if (dbConnection.State.ToString() == "Closed")
+            try
             {
-                dbConnection.Open();
-            }
-
-            string query = "Insert into individual (username,pasword,fname,mname,lname,address1,contact,mobile,email,website) values(@UserName,@Pasword,@FName,@MName,@LName,@Address,@Contact,@Mobile,@Email,@Website,@photo)";
-
-            SqlCommand command = new SqlCommand(query, dbConnection);
-            command.Parameters.AddWithValue("@UserName", username);
-            command.Parameters.AddWithValue("@Pasword", pasword);
-            command.Parameters.AddWithValue("@FName", fname);
-            command.Parameters.AddWithValue("@MName", mname);
-            command.Parameters.AddWithValue("@LName", lname);
-            command.Parameters.AddWithValue("@Address", address1);
-            command.Parameters.AddWithValue("@Contact", contact);
-            command.Parameters.AddWithValue("@Mobile", mobile);
-            command.Parameters.AddWithValue("@Email", email);
-            command.Parameters.AddWithValue("@Website", website);
-            command.Parameters.AddWithValue("@Photo", profilePic);
-            command.ExecuteNonQuery();
-            dbConnection.Close();
-        }
-
-        public bool UserAuthentication(string userName, string pasword)
-        {
-            bool auth = false;
-
-            if (dbConnection.State.ToString() == "Closed")
-            {
-                dbConnection.Open();
-            }
-
-            string query = "SELECT pasword FROM allusers WHERE username= @username";
-
-            SqlCommand command = new SqlCommand(query, dbConnection);
-            command.Parameters.AddWithValue("@username", userName);
-            SqlDataReader reader = command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
+                if (dbConnection.State.ToString() == "Closed")
                 {
-                    auth = PasswordEncrytionService.ValidatePassword(pasword, reader["pasword"].ToString());
+                    dbConnection.Open();
                 }
+
+                String query = "Insert into individualUser (userName,pasword,firstName,middleName,lastName,addres,contactNo,mobileNo,emailId,webSite,profilePictureURL) values(@UserName,@Password,@FirstName,@MiddleName,@LastName,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@ProfilePictureURL)";
+           
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", passWord);
+                command.Parameters.AddWithValue("@FirstName", firstName);
+                command.Parameters.AddWithValue("@MiddleName", middleName);
+                command.Parameters.AddWithValue("@LastName", lastName);
+                command.Parameters.AddWithValue("@Address", aDdress);
+                command.Parameters.AddWithValue("@ContactNo", contactNo);
+                command.Parameters.AddWithValue("@MobileNo", mobileNo);
+                command.Parameters.AddWithValue("@EmailID", emailId);
+                command.Parameters.AddWithValue("@Website", webSite);
+                command.Parameters.AddWithValue("@ProfilePictureURL", profilePicURL);
+                command.ExecuteNonQuery();             
+                return true;
             }
+            catch (Exception e)
+            {
+                return false;
+            }
+            finally {
+                dbConnection.Close();
+            }
+        }
 
-            reader.Close();
-            dbConnection.Close();
+        public bool CreateOrganizationProfile(String userName, String passWord, String organizationName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture)
+        {
+            try
+            {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
 
-            return auth;
+                String query = "Insert into organizationUser (userName,pasword,organizationName,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,organizationPictureURL) values(@UserName,@Password,@OrganizationName,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@Latitude,@Longitude,@OrganizationPictureURL)";
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", passWord);
+                command.Parameters.AddWithValue("@OrganizationName", organizationName);
+                command.Parameters.AddWithValue("@Address", aDdress);
+                command.Parameters.AddWithValue("@ContactNo", contactNo);
+                command.Parameters.AddWithValue("@MobileNo", mobileNo);
+                command.Parameters.AddWithValue("@EmailID", emailId);
+                command.Parameters.AddWithValue("@Website", webSite);
+                command.Parameters.AddWithValue("@Latitude", latitude);
+                command.Parameters.AddWithValue("@Longitude", longitude);
+                command.Parameters.AddWithValue("@OrganizationPictureURL", organizationPicture);
+                command.ExecuteNonQuery();
+
+                return true;
+            }
+            catch(){
+                return false;
+            }
+            finally{
+                dbConnection.Close();
+            }
+        }
+
+        public bool CreateShopProfile(String userName, String passWord, String shopName, String shopOwner,String panNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String shopPictureURL)
+        {
+            try
+            {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String query = "Insert into shopUser (userName,pasword,shopName,panNo,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,shopPictureURL) values(@UserName,@Password,@ShopName,@PANNo,@Address,@ContactNo,@MobileNo,@EmailID,@Website,@Latitude,@Longitude,@ShopPictureURL)";
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", passWord);
+                command.Parameters.AddWithValue("@ShopName", shopName);
+                command.Parameters.AddWithValue("@PANNo", panNo);
+                command.Parameters.AddWithValue("@Address", aDdress);
+                command.Parameters.AddWithValue("@ContactNo", contactNo);
+                command.Parameters.AddWithValue("@MobileNo", mobileNo);
+                command.Parameters.AddWithValue("@EmailID", emailId);
+                command.Parameters.AddWithValue("@Website", webSite);
+                command.Parameters.AddWithValue("@Latitude", latitude);
+                command.Parameters.AddWithValue("@Longitude", longitude);
+                command.Parameters.AddWithValue("@ShopPictureURL", shopPictureURL);
+                command.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            finally
+            {
+                dbConnection.Close();
+            }
+        }
+
+        public String UserAuthentication(String userName, String passWord)
+        {
+            String authenticate = "False";
+
+            try
+            {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String query = "SELECT pasword,userCategory FROM allUsersTable WHERE userName= @UserName";
+
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        if(PasswordEncrytionService.ValidatePassword(passWord, reader["pasword"].ToString())){
+                            authenticate = reader["userCategory"].ToString();
+                        }
+                    }
+                }
+
+                reader.Close();
+
+                return authenticate;
+
+            }
+            catch (Exception e)
+            {
+                return "Error";
+            }
+            finally
+            {
+                dbConnection.Close();
+            }           
 
         }
 
-        public void CCompanyProfile(String username, String pasword, String cname, String address1, Int64 contact, Int64 mobile, String email, String website, float latitude, float longitude, byte[] photo)
-        {
+        public DataTable GetUserDetail(String userName,String userCategory) {
 
-            if (dbConnection.State.ToString() == "Closed")
+            DataTable userDetail = null;
+            String query = "";
+            SqlCommand command=null;
+            SqlDataReader reader=null;
+
+            try
             {
-                dbConnection.Open();
+
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                switch (userCategory)
+                {
+                    case "Individual":
+                        {
+                            userDetail = new DataTable();
+                            userDetail.Columns.Add(new DataColumn("firstName", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("middleName", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("lastName", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("addres", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("contactNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("mobileNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("emailId", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("webSite", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("profilePictureURL", typeof(String)));
+
+                            query = "SELECT firstName,middleName,lastName,addres,contactNo,mobileNo,emailId,webSite,profilePictureURL FROM individualUser where userName = @UserName";
+                            command = new SqlCommand(query, dbConnection);
+                            command.Parameters.AddWithValue("@UserName", userName);
+                            reader = command.ExecuteReader();
+
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    userDetail.Rows.Add(reader["firstName"], reader["middleName"], reader["lastName"], reader["addres"], reader["contactNo"], reader["mobileNo"], reader["emailId"], reader["webSite"], reader["profilePictureURL"]);
+                                }
+                            }
+                            
+                            break;
+                        }
+                    case "Shop":
+                        {
+                            userDetail = new DataTable();
+                            userDetail.Columns.Add(new DataColumn("shopName", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("shopOwner", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("panNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("addres", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("contactNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("mobileNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("emailId", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("webSite", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("latitude", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("longitude", typeof(Double)));
+                            userDetail.Columns.Add(new DataColumn("longitude", typeof(Double)));
+                            userDetail.Columns.Add(new DataColumn("shopPictureURL", typeof(String)));
+
+                            query = "SELECT shopName,shopOwner,panNo,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,shopPictureURL FROM shopUser where userName = @UserName";
+                            command = new SqlCommand(query, dbConnection);
+                            command.Parameters.AddWithValue("@UserName", userName);
+                            reader = command.ExecuteReader();
+
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    userDetail.Rows.Add(reader["shopName"], reader["shopOwner"], reader["panNo"], reader["addres"], reader["contactNo"], reader["mobileNo"], reader["emailId"], reader["webSite"], reader["latitude"], reader["longitude"], reader["shopPictureURL"]);
+                                }
+                            }
+                           
+                            break;
+                        }
+
+                    case "Organization":
+                        {
+                            userDetail = new DataTable();
+                            userDetail.Columns.Add(new DataColumn("organizationName", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("registrationNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("addres", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("contactNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("mobileNo", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("emailId", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("webSite", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("latitude", typeof(String)));
+                            userDetail.Columns.Add(new DataColumn("longitude", typeof(Double)));
+                            userDetail.Columns.Add(new DataColumn("shopPictureURL", typeof(String)));
+
+                            query = "SELECT organizationName,registrationNo,addres,contactNo,mobileNo,emailId,webSite,latitude,longitude,organizationPictureURL FROM organizationUser where userName = @UserName";
+                            command = new SqlCommand(query, dbConnection);
+                            command.Parameters.AddWithValue("@UserName", userName);
+                            reader = command.ExecuteReader();
+
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    userDetail.Rows.Add(reader["organizationName"], reader["registrationNo"], reader["addres"], reader["contactNo"], reader["mobileNo"], reader["emailId"], reader["webSite"], reader["latitude"], reader["longitude"], reader["shopPictureURL"]);
+                                }
+                            }
+                            
+                            break;
+                        }
+                }
+
+                return userDetail;
+
             }
-
-            String query = "Insert into company (username,pasword,cname,address1,contact,mobile,email,website,latitude,longitude,photo) values(@UserName,@Pasword,@CName,@Address,@Contact,@Mobile,@Email,@Website,@Latitude,@Longitude,@Photo)";
-            SqlCommand command = new SqlCommand(query, dbConnection);
-            command.Parameters.AddWithValue("@UserName", username);
-            command.Parameters.AddWithValue("@Pasword", pasword);
-            command.Parameters.AddWithValue("@CName", cname);
-            command.Parameters.AddWithValue("@Address", address1);
-            command.Parameters.AddWithValue("@Contact", contact);
-            command.Parameters.AddWithValue("@Mobile", mobile);
-            command.Parameters.AddWithValue("@Email", email);
-            command.Parameters.AddWithValue("@Website", website);
-            command.Parameters.AddWithValue("@Latitude", latitude);
-            command.Parameters.AddWithValue("@Longitude", longitude);
-            command.Parameters.AddWithValue("@Photo", photo);
-            command.ExecuteNonQuery();
-
-            dbConnection.Close();
-        }
-
-        public void CShopProfile(String username, String pasword, String shpname, String panno, String address1, Int64 contact, Int64 mobile, String email, String website, float latitude, float longitude, byte[] photo)
-        {
-            if (dbConnection.State.ToString() == "Closed")
+            catch (Exception e)
             {
-                dbConnection.Open();
+                return null;
             }
-
-            String query = "Insert into shop_table (username,pasword,shpname,panno,address1,contact,mobile,email,website,latitude,longitude,photo) values(@UserName,@Pasword,@ShpName,@Panno,@Address,@Contact,@Mobile,@Email,@Website,@Latitude,@Longitude,@Photo)";
-            SqlCommand command = new SqlCommand(query, dbConnection);
-            command.Parameters.AddWithValue("@UserName", username);
-            command.Parameters.AddWithValue("@Pasword", pasword);
-            command.Parameters.AddWithValue("@ShpName", shpname);
-            command.Parameters.AddWithValue("@Panno", panno);
-            command.Parameters.AddWithValue("@Address", address1);
-            command.Parameters.AddWithValue("@Contact", contact);
-            command.Parameters.AddWithValue("@Mobile", mobile);
-            command.Parameters.AddWithValue("@Email", email);
-            command.Parameters.AddWithValue("@Website", website);
-            command.Parameters.AddWithValue("@Latitude", latitude);
-            command.Parameters.AddWithValue("@Longitude", longitude);
-            command.Parameters.AddWithValue("@Photo", photo);
-            command.ExecuteNonQuery();
-
-            dbConnection.Close();
+            finally {
+                reader.Close();
+                dbConnection.Close();
+            }
+            
         }
 
         public void PushAdstoSales(String adid, String username, String title, String ad_desc, String brand, Double price, String ad_stat, String condition, String timeused, Int64 contact)
