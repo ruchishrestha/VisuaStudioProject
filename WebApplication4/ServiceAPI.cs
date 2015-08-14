@@ -77,7 +77,7 @@ namespace WebApplication4
 
                 return true;
             }
-            catch(){
+            catch(Exception e){
                 return false;
             }
             finally{
