@@ -39,7 +39,15 @@ namespace WebApplication4
                 command.Parameters.AddWithValue("@EmailID", emailId);
                 command.Parameters.AddWithValue("@Website", webSite);
                 command.Parameters.AddWithValue("@ProfilePictureURL", profilePicURL);
-                command.ExecuteNonQuery();             
+                command.ExecuteNonQuery();
+
+                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@Usercategory)";
+                command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", passWord);
+                command.Parameters.AddWithValue("@UserCategory", "Individual");
+                command.ExecuteNonQuery();
+
                 return true;
             }
             catch (Exception e)
@@ -76,6 +84,13 @@ namespace WebApplication4
                 command.Parameters.AddWithValue("@OrganizationPictureURL", organizationPicture);
                 command.ExecuteNonQuery();
 
+                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@Usercategory)";
+                command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", passWord);
+                command.Parameters.AddWithValue("@UserCategory", "Organization");
+                command.ExecuteNonQuery();
+
                 return true;
             }
             catch(Exception e){
@@ -110,6 +125,13 @@ namespace WebApplication4
                 command.Parameters.AddWithValue("@Latitude", latitude);
                 command.Parameters.AddWithValue("@Longitude", longitude);
                 command.Parameters.AddWithValue("@ShopPictureURL", shopPictureURL);
+                command.ExecuteNonQuery();
+
+                query = "Insert into allusersTable (userName,pasword,userCategory) values (@UserName,@Password,@Usercategory)";
+                command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", passWord);
+                command.Parameters.AddWithValue("@UserCategory", "Shop");
                 command.ExecuteNonQuery();
 
                 return true;
