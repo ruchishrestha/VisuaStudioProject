@@ -1178,7 +1178,7 @@ namespace WebApplication4
             {
                 while (reader.Read())
                 {
-                    ContactsList.Rows.Add(reader["adid"], reader["photo"], reader["username"], reader["title"], reader["addres"], reader["contact"], reader["mobile"]);
+                    ContactsList.Rows.Add(reader["adid"], reader["photoURL"], reader["username"], reader["title"], reader["addres"], reader["contact"], reader["mobile"]);
                 }
         }
          reader.Close();
@@ -1204,7 +1204,7 @@ namespace WebApplication4
             ContactDetails.Columns.Add(new DataColumn("email", typeof(String)));
             ContactDetails.Columns.Add(new DataColumn("latitude", typeof(Double)));
             ContactDetails.Columns.Add(new DataColumn("longitude", typeof(Double)));
-            ContactDetails.Columns.Add(new DataColumn("photo", typeof(String)));        
+            ContactDetails.Columns.Add(new DataColumn("photoURL", typeof(String)));        
 
             if (dbConnection.State.ToString() == "Closed")
             {
@@ -1214,10 +1214,10 @@ namespace WebApplication4
             switch (category)
             {
                 case "contacts":
-                    query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,mobile,addres,email,latitude,longitude,photo from contacts where adid=@Adid";
+                    query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,mobile,addres,email,latitude,longitude,photoURL from contacts where adid=@Adid";
                     break;
                 case "wanted":
-                     query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,mobile,addres,email,latitude,longitude,photo from wanted where adid=@Adid";
+                     query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,mobile,addres,email,latitude,longitude,photoURL from wanted where adid=@Adid";
                     break;
                 default:
                     break;
@@ -1233,7 +1233,7 @@ namespace WebApplication4
             {
                 while (reader.Read())
                 {
-                    ContactDetails.Rows.Add(reader["adid"], reader["dateOnly"], reader["username"], reader["title"], reader["ad_description"], reader["Category"], reader["contact"], reader["mobile"], reader["addres"], reader["email"], reader["latitude"], reader["longitude"], reader["photo"]);
+                    ContactDetails.Rows.Add(reader["adid"], reader["dateOnly"], reader["username"], reader["title"], reader["ad_description"], reader["Category"], reader["contact"], reader["mobile"], reader["addres"], reader["email"], reader["latitude"], reader["longitude"], reader["photoURL"]);
                 }
             }
             reader.Close();
