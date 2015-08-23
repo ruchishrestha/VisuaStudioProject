@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,23 +9,66 @@ namespace WebApplication4
 {
     public interface IServiceAPI
     {
-        bool CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePic);
+        // Saten
+      String CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePictureURL);
         
-        bool CreateOrganizationProfile(String userName, String passWord, String organizationName, String registrationNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture);
+        String CreateOrganizationProfile(String userName, String passWord, String organizationName, String registrationNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture);
 
-        bool CreateShopProfile(String userName, String passWord, String shopName, String shopOwner, String panNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String shopPictureURL);
+        String CreateShopProfile(String userName, String passWord, String shopName, String shopOwner, String panNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String shopPictureURL);
 
-        String UserAuthentication(String userName, String passWord);
+        DataTable UserAuthentication(String userName, String passWord);       
+
+        DataTable GetIndividualDetail(String userName);
+
+        DataTable GetShopDetail(String userName);
+
+        DataTable GetOrganizationDetail(String userName);
+
+        String AddContactsAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, String latitude, String longitude, String picURL);
+
+        String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, String latitude, String longitude, String picURL);
+
+        String AddSalesAds(String userName, String title, String description, String brand, String model, String price, String salesStatus, String condition, String timeUsed, String contactNo, String avgRating, String salesCategory);
+
+        String AddtoSalesGallery(String salesId, String SalesCategory , String[] pictureURL);
+
+        String AddRealEstateAds(String userName, String title, String description, String houseNo, String propertyType, String saleType, String price, String aDdress, String contactNo, String mobileNo, Double latitude, Double longitude);
+
+        String AddtoRealEstateGallery(String realId, String[] pictureURL); 
         
-        DataTable GetUserDetail(String userName, String userCategory);
+        String AddJobAds(String userName, String jobTitle, String jobDescription, String responsibility, String skills, String jobCategory, String jobTiming, String vacancy, String salary, String aDdress, String contactNo, String emailId, String webSite, Double latitude, Double longitude, String organizationLogoURL);
 
-        void PushAdstoSales(String adid, String username, String title, String ad_desc, String brand, Double price, String ad_stat, String condition, String timeused, Int64 contact);
+        String UpdateJobAd(String jobId, String pictureURL);
+    
 
+        // Ruchi
         DataTable GetSalesDetail();
 
         void DeleteSalesAd(String adid);
 
-        DataTable GetContactsList();
+        DataTable GetContactsList(String category);
+
+        DataTable GetContactDetails(int adid,String category);
+
+        DataTable GetMyComment(int adid, String username, String category);
+
+        DataTable GetAllComments(int adid, String category);
+
+        void PushComments(String category, String username, int adid, String commentText);
+
+        bool PushtoWatchlist(int adid, String category, String username);
+
+        DataTable GetRealestateList();
+
+        DataTable GetRealestateDetails(int realestateID);
+
+        DataTable GetJobsList();
+
+        DataTable GetJobsDetail(int jobID);
+
+        String GetRealestatePictureURL(int adid);
+
+        ArrayList GetAllImages(int adid);
 
       
     }
