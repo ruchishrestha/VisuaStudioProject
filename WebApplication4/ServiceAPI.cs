@@ -562,7 +562,7 @@ namespace WebApplication4
             return userDetail;
         }
 
-        public String AddContactsAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, String latitude, String longitude, String picURL)
+        public String AddContactsAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL)
         {
             String result = "";
 
@@ -573,7 +573,7 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Insert into contacts (username,title,ad_description,Category,addres,contact,mobile,email,latitude,longitude,photo) values (@UserName,@Title,@Description,@Category,@Address,@ContactNo,@MobileNo,@EmailID,@Latitude,@Longitude,@PictureURL)";
+                String query = "Insert into contacts (username,title,ad_description,Category,addres,contact,mobile,email,latitude,longitude,photoURL) values (@UserName,@Title,@Description,@Category,@Address,@ContactNo,@MobileNo,@EmailID,@Latitude,@Longitude,@PictureURL)";
 
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
@@ -591,7 +591,7 @@ namespace WebApplication4
 
                 dbConnection.Close();
 
-                result = "Success";
+                result = getContactsAdID(userName);
             }
             catch (Exception e)
             {
@@ -601,7 +601,66 @@ namespace WebApplication4
             return result;
         }
 
-        public String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, String latitude, String longitude, String picURL)
+        public String UpdateContactsAd(String adId, String pictureURL)
+        {
+            String result = "";
+            try
+            {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String query = "Update contacts set photoURL = @PhotoURL where adid = @ADID";
+
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@PhotoURL", pictureURL);
+                command.Parameters.AddWithValue("@ADID", adId);
+                command.ExecuteNonQuery();
+
+                dbConnection.Close();
+
+                result = "Success";
+            }
+            catch (Exception e)
+            {
+                result = "False";
+            }
+
+            return result;
+        }
+
+        public String getContactsAdID(String userName)
+        {
+            String adID = "";
+
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+
+            String query = "Select top 1 adid from contacts where username = @UserName order by ad_insertdate desc";
+
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@UserName", userName);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    adID = reader["adid"].ToString();
+                }
+            }
+
+            reader.Close();
+            dbConnection.Close();
+
+            return adID;
+        }
+
+        public String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL)
         {
             String result = "";
 
@@ -612,7 +671,7 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Insert into wanted (username,title,ad_description,Category,addres,contact,mobile,email,latitude,longitude,photo) values (@UserName,@Title,@Description,@Category,@Address,@ContactNo,@MobileNo,@EmailID,@Latitude,@Longitude,@PictureURL)";
+                String query = "Insert into wanted (username,title,ad_description,Category,addres,contact,mobile,email,latitude,longitude,photoURL) values (@UserName,@Title,@Description,@Category,@Address,@ContactNo,@MobileNo,@EmailID,@Latitude,@Longitude,@PictureURL)";
 
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
@@ -630,7 +689,7 @@ namespace WebApplication4
 
                 dbConnection.Close();
 
-                result = "Success";
+                result = getWantedAdID(userName);
             }
             catch (Exception e)
             {
@@ -638,6 +697,65 @@ namespace WebApplication4
             }
 
             return result;
+        }
+
+        public String UpdateWantedAd(String adId, String pictureURL)
+        {
+            String result = "";
+            try
+            {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String query = "Update wanted set photoURL = @LogoURL where adid = @ADID";
+
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@PhotoURL", pictureURL);
+                command.Parameters.AddWithValue("@ADID", adId);
+                command.ExecuteNonQuery();
+
+                dbConnection.Close();
+
+                result = "Success";
+            }
+            catch (Exception e)
+            {
+                result = "False";
+            }
+
+            return result;
+        }
+
+        public String getWantedAdID(String userName)
+        {
+            String adID = "";
+
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+
+            String query = "Select top 1 adid from wanted where username = @UserName order by ad_insertdate desc";
+
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@UserName", userName);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    adID = reader["adid"].ToString();
+                }
+            }
+
+            reader.Close();
+            dbConnection.Close();
+
+            return adID;
         }
 
         public String AddSalesAds(String userName, String title, String description, String brand, String model, String price, String salesStatus, String condition, String timeUsed, String contactNo, String avgRating, String salesCategory)
@@ -1025,12 +1143,13 @@ namespace WebApplication4
             String query1=null;
              DataTable ContactsList = new DataTable();
             ContactsList.Columns.Add(new DataColumn("adid", typeof(int)));
-            ContactsList.Columns.Add(new DataColumn("photo", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("photoURL", typeof(String)));
              ContactsList.Columns.Add(new DataColumn("username", typeof(String)));
              ContactsList.Columns.Add(new DataColumn("title", typeof(String)));
              ContactsList.Columns.Add(new DataColumn("addres", typeof(String)));
              ContactsList.Columns.Add(new DataColumn("contact", typeof(String)));
-            
+             ContactsList.Columns.Add(new DataColumn("mobile", typeof(String)));
+                            
 
             
             if (dbConnection.State.ToString() == "Closed")
@@ -1041,10 +1160,10 @@ namespace WebApplication4
             switch (category)
             {
                 case "contacts":
-                   query1="Select adid,photo,username,title,addres,contact from contacts order by ad_insertdate desc";
+                   query1="Select adid,photoURL,username,title,addres,contact,mobile from contacts order by ad_insertdate desc";
                     break;
                 case "wanted":
-                    query1="Select adid,photo,username,title,addres,contact from wanted order by ad_insertdate desc";
+                    query1="Select adid,photoURL,username,title,addres,contact,mobile from wanted order by ad_insertdate desc";
                     break;
                 default:
                     break;
@@ -1059,7 +1178,7 @@ namespace WebApplication4
             {
                 while (reader.Read())
                 {
-                    ContactsList.Rows.Add(reader["adid"],reader["photo"],reader["username"],reader["title"],reader["addres"],reader["contact"]);
+                    ContactsList.Rows.Add(reader["adid"], reader["photo"], reader["username"], reader["title"], reader["addres"], reader["contact"], reader["mobile"]);
                 }
         }
          reader.Close();
@@ -1080,6 +1199,7 @@ namespace WebApplication4
             ContactDetails.Columns.Add(new DataColumn("ad_description", typeof(String)));
             ContactDetails.Columns.Add(new DataColumn("Category", typeof(String)));
             ContactDetails.Columns.Add(new DataColumn("contact", typeof(String)));
+            ContactDetails.Columns.Add(new DataColumn("mobile", typeof(String)));
             ContactDetails.Columns.Add(new DataColumn("addres", typeof(String)));
             ContactDetails.Columns.Add(new DataColumn("email", typeof(String)));
             ContactDetails.Columns.Add(new DataColumn("latitude", typeof(Double)));
@@ -1094,10 +1214,10 @@ namespace WebApplication4
             switch (category)
             {
                 case "contacts":
-                    query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,addres,email,latitude,longitude,photo from contacts where adid=@Adid";
+                    query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,mobile,addres,email,latitude,longitude,photo from contacts where adid=@Adid";
                     break;
                 case "wanted":
-                     query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,addres,email,latitude,longitude,photo from wanted where adid=@Adid";
+                     query2 = "Select adid,convert(nvarchar(10),ad_insertdate,101) as dateOnly,username,title,ad_description,Category,contact,mobile,addres,email,latitude,longitude,photo from wanted where adid=@Adid";
                     break;
                 default:
                     break;
@@ -1113,7 +1233,7 @@ namespace WebApplication4
             {
                 while (reader.Read())
                 {
-                    ContactDetails.Rows.Add(reader["adid"], reader["dateOnly"], reader["username"], reader["title"], reader["ad_description"], reader["Category"], reader["contact"], reader["addres"],reader["email"], reader["latitude"], reader["longitude"], reader["photo"]);
+                    ContactDetails.Rows.Add(reader["adid"], reader["dateOnly"], reader["username"], reader["title"], reader["ad_description"], reader["Category"], reader["contact"], reader["mobile"], reader["addres"], reader["email"], reader["latitude"], reader["longitude"], reader["photo"]);
                 }
             }
             reader.Close();

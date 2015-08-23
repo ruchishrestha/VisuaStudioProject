@@ -24,14 +24,18 @@ namespace WebApplication4
 
         DataTable GetOrganizationDetail(String userName);
 
-        String AddContactsAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, String latitude, String longitude, String picURL);
+        String AddContactsAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL);
 
-        String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, String latitude, String longitude, String picURL);
+        String UpdateContactsAd(String adId, String pictureURL);
+        
+        String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL);
 
+        String UpdateWantedAd(String adId, String pictureURL);
+        
         String AddSalesAds(String userName, String title, String description, String brand, String model, String price, String salesStatus, String condition, String timeUsed, String contactNo, String avgRating, String salesCategory);
 
         String AddtoSalesGallery(String salesId, String SalesCategory , String[] pictureURL);
-
+         
         String AddRealEstateAds(String userName, String title, String description, String houseNo, String propertyType, String saleType, String price, String aDdress, String contactNo, String mobileNo, Double latitude, Double longitude);
 
         String AddtoRealEstateGallery(String realId, String[] pictureURL); 
