@@ -709,7 +709,7 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Update wanted set photoURL = @LogoURL where adid = @ADID";
+                String query = "Update wanted set photoURL = @PhotoURL where adid = @ADID";
 
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@PhotoURL", pictureURL);
