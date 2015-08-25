@@ -722,7 +722,7 @@ namespace WebApplication4
             }
             catch (Exception e)
             {
-                result = "False";
+                result = "False: "+e;
             }
 
             return result;
