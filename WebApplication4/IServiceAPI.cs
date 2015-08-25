@@ -46,7 +46,7 @@ namespace WebApplication4
     
 
         // Ruchi
-        DataTable GetSalesDetail();
+        DataTable GetSalesDetail(int salesID);
 
         void DeleteSalesAd(String adid);
 
@@ -73,6 +73,17 @@ namespace WebApplication4
         String GetRealestatePictureURL(int adid);
 
         ArrayList GetAllImages(int adid);
+
+        DataTable GetSalesList(String salesCategory);
+
+        ArrayList GetSalesImages(int adid);
+
+        String GetSalesPictureURL(int adid);
+
+        void PushRateValue(int salesID, String userID, String salesCategory,Double myrating);
+
+        Double GetMyRating(int salesID, String userID, String salesCategory);
+
 
       
     }

@@ -1088,34 +1088,38 @@ namespace WebApplication4
 
         // Ruchi
 
-        public DataTable GetSalesDetail()
+        public DataTable GetSalesDetail(int salesID)
         {
             DataTable SalesDetailTable = new DataTable();
-            SalesDetailTable.Columns.Add(new DataColumn("adid", typeof(String)));
+            SalesDetailTable.Columns.Add(new DataColumn("salesID", typeof(String)));
+            SalesDetailTable.Columns.Add(new DataColumn("dateOnly", typeof(String)));
             SalesDetailTable.Columns.Add(new DataColumn("username", typeof(String)));
             SalesDetailTable.Columns.Add(new DataColumn("title", typeof(String)));
-            SalesDetailTable.Columns.Add(new DataColumn("ad_desc", typeof(String)));
+            SalesDetailTable.Columns.Add(new DataColumn("ad_description", typeof(String)));
             SalesDetailTable.Columns.Add(new DataColumn("brand", typeof(String)));
+            SalesDetailTable.Columns.Add(new DataColumn("model", typeof(String)));
             SalesDetailTable.Columns.Add(new DataColumn("price", typeof(Double)));
-            SalesDetailTable.Columns.Add(new DataColumn("ad_stat", typeof(String)));
+            SalesDetailTable.Columns.Add(new DataColumn("salesStatus", typeof(String)));
             SalesDetailTable.Columns.Add(new DataColumn("condition", typeof(String)));
             SalesDetailTable.Columns.Add(new DataColumn("timeused", typeof(String)));
-            SalesDetailTable.Columns.Add(new DataColumn("contact", typeof(Int64)));
+            SalesDetailTable.Columns.Add(new DataColumn("contact", typeof(String)));
+            SalesDetailTable.Columns.Add(new DataColumn("averageRating", typeof(Double)));
 
             if (dbConnection.State.ToString() == "Closed")
             {
                 dbConnection.Open();
             }
 
-            String query = "Select adid,username,title,ad_desc,brand,price,ad_stat,condition,timeused,contact from sales where category='mobile'";
+            String query = "Select salesID,convert(nvarchar(10),ad_insertdate,101)as dateOnly,username,title,ad_description,brand,model,price,salesStatus,condition,timeused,contact,averageRating from sales where salesID=@adid";
             SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", salesID);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    SalesDetailTable.Rows.Add(reader["adid"], reader["username"], reader["title"], reader["ad_desc"], reader["brand"], reader["price"], reader["ad_stat"], reader["condition"], reader["timeused"], reader["contact"]);
+                    SalesDetailTable.Rows.Add(reader["salesID"], reader["username"], reader["dateOnly"],reader["title"], reader["ad_description"], reader["brand"],reader["model"], reader["price"], reader["salesStatus"], reader["condition"], reader["timeused"], reader["contact"],reader["averageRating"]);
                 }
             }
             reader.Close();
@@ -1561,6 +1565,169 @@ namespace WebApplication4
             reader.Close();
             dbConnection.Close();
             return realestatePicURL;
+        }
+
+        public DataTable GetSalesList(String salesCategory)
+        {
+            DataTable SalesList = new DataTable();
+            SalesList.Columns.Add(new DataColumn("salesID",typeof(int)));
+            SalesList.Columns.Add(new DataColumn("username",typeof(String)));
+            SalesList.Columns.Add(new DataColumn("title",typeof(String)));
+            SalesList.Columns.Add(new DataColumn("brand",typeof(String)));
+            SalesList.Columns.Add(new DataColumn("model",typeof(String)));
+            SalesList.Columns.Add(new DataColumn("price",typeof(String)));
+            SalesList.Columns.Add(new DataColumn("salesStatus",typeof(String)));
+            SalesList.Columns.Add(new DataColumn("condition", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("averageRating", typeof(Double)));
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select salesID,username,title,brand,model,price,salesStatus,condition,averageRating from sales where salesCategory=@SalesCategory order by ad_insertdate desc";
+             SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@SalesCategory", salesCategory);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    SalesList.Rows.Add(reader["salesID"], reader["username"], reader["title"], reader["brand"], reader["model"], reader["price"], reader["salesStatus"],reader["condition"],reader["averageRating"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return SalesList;
+        }
+
+  
+
+        public ArrayList GetSalesImages(int adid)
+        {
+            ArrayList salesPicURL = new ArrayList();
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select sales_pictureURL from salesGallery where salesID=@adid";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", adid);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    salesPicURL.Add(reader["sales_pictureURL"]);
+
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return salesPicURL;
+        }
+
+        public String GetSalesPictureURL(int adid)
+        {
+            String salesPicURL = "";
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select top 1 sales_pictureURL from salesGallery where salesID=@adid";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", adid);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    salesPicURL = reader["sales_pictureURL"].ToString();
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return salesPicURL;
+
+        }
+
+        public void PushRateValue(int salesID, String userID, String salesCategory,Double myrating)
+        {
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select * from allrating where salesID=@SalesID and username=@userID and category=@salesCategory";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@SalesID", salesID);
+            command.Parameters.AddWithValue("@userID", userID);
+            command.Parameters.AddWithValue("@salesCategory", salesCategory);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                reader.Close();
+                dbConnection.Close();
+                updateintable(myrating,salesID,userID,salesCategory);
+            }
+            else
+            {
+                reader.Close();
+                dbConnection.Close();
+                insertintable(myrating, salesID, userID, salesCategory);
+            }
+        }
+
+        public void updateintable(Double myrating,int salesID,String userID,String salesCategory)
+        {
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Update allrating set rateValue=@Myrating where salesID=@adid and userID=@UserId and category=@SalesCategory ";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", salesID);
+            command.Parameters.AddWithValue("@UserId", userID);
+            command.Parameters.AddWithValue("@SalesCategory", salesCategory);
+            command.Parameters.AddWithValue("@Myrating", myrating);
+            command.ExecuteNonQuery();
+            dbConnection.Close();
+        }
+
+        public void insertintable(Double myrating, int salesID, String userID, String salesCategory)
+        {
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Insert into allrating (category,username,salesID,ratevalue) values(category=@SalesCategory,userID=@UserId,salesID=@adid, rateValue=@Myrating)";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", salesID);
+            command.Parameters.AddWithValue("@UserId", userID);
+            command.Parameters.AddWithValue("@SalesCategory", salesCategory);
+            command.Parameters.AddWithValue("@Myrating", myrating);
+            command.ExecuteNonQuery();
+            dbConnection.Close();
+        }
+
+        public Double GetMyRating(int salesID,String userID,String salesCategory){
+            Double myrate=0.0;
+             if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query="Select rateValue from allrating where salesID=@adid and username=@userID and category=@salesCategory";
+             SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", salesID);
+            command.Parameters.AddWithValue("@userId", userID);
+            command.Parameters.AddWithValue("@salesCategory", salesCategory);
+             SqlDataReader reader = command.ExecuteReader();
+            if(reader.HasRows){
+                while(reader.Read()){
+                    myrate=(Double)reader["rateValue"];
+                }
+            }
+            return myrate;
         }
     }
 }
