@@ -27,11 +27,15 @@ namespace WebApplication4
         String AddContactsAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL);
 
         String UpdateContactsAd(String adId, String pictureURL);
+
+        DataTable GetContactsCategory();
         
         String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL);
 
         String UpdateWantedAd(String adId, String pictureURL);
-        
+
+        DataTable GetWantedCategory(); 
+
         String AddSalesAds(String userName, String title, String description, String brand, String model, String price, String salesStatus, String condition, String timeUsed, String contactNo, String avgRating, String salesCategory);
 
         String AddtoSalesGallery(String salesId, String SalesCategory , String[] pictureURL);
@@ -43,6 +47,8 @@ namespace WebApplication4
         String AddJobAds(String userName, String jobTitle, String jobDescription, String responsibility, String skills, String jobCategory, String jobTiming, String vacancy, String salary, String aDdress, String contactNo, String emailId, String webSite, Double latitude, Double longitude, String organizationLogoURL);
 
         String UpdateJobAd(String jobId, String pictureURL);
+
+        DataTable GetJobCategory();
     
 
         // Ruchi

@@ -660,6 +660,30 @@ namespace WebApplication4
             return adID;
         }
 
+        public DataTable GetContactsCategory()
+        {
+            DataTable contactsCategory = new DataTable();
+            contactsCategory.Columns.Add(new DataColumn("Category", typeof(String)));
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select category from contacts_category";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    contactsCategory.Rows.Add(reader["category"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+
+            return contactsCategory;
+        }
+
         public String AddWantedAds(String userName, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL)
         {
             String result = "";
@@ -756,6 +780,30 @@ namespace WebApplication4
             dbConnection.Close();
 
             return adID;
+        }
+
+        public DataTable GetWantedCategory()
+        {
+            DataTable wantedCategory = new DataTable();
+            wantedCategory.Columns.Add(new DataColumn("Category", typeof(String)));
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select category from wanted_category";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    wantedCategory.Rows.Add(reader["category"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+
+            return wantedCategory;
         }
 
         public String AddSalesAds(String userName, String title, String description, String brand, String model, String price, String salesStatus, String condition, String timeUsed, String contactNo, String avgRating, String salesCategory)
@@ -1084,7 +1132,28 @@ namespace WebApplication4
 
             return adID;
         }
-      
+
+        public DataTable GetJobCategory()
+        {
+            DataTable jobCategory = new DataTable();
+            jobCategory.Columns.Add(new DataColumn("Category", typeof(String)));
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select job_category from job_category";
+            SqlCommand command = new SqlCommand(query,dbConnection);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows) {
+                while (reader.Read()) { 
+                    jobCategory.Rows.Add(reader["job_category"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+
+            return jobCategory;
+        }
 
         // Ruchi
 
