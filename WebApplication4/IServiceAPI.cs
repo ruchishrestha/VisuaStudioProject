@@ -90,6 +90,8 @@ namespace WebApplication4
 
         Double GetMyRating(int salesID, String userID, String salesCategory);
 
+        Double GetCommentRating(int adid,String username);
+
 
       
     }

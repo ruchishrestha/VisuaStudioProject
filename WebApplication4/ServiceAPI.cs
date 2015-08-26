@@ -1353,13 +1353,14 @@ namespace WebApplication4
             AllComments.Columns.Add(new DataColumn("postedDate",typeof(String)));
             AllComments.Columns.Add(new DataColumn("username", typeof(String)));
             AllComments.Columns.Add(new DataColumn("commentText", typeof(String)));
+            AllComments.Columns.Add(new DataColumn("adid", typeof(int)));
 
             if (dbConnection.State.ToString() == "Closed")
             {
                 dbConnection.Open();
             }
 
-            String query = "Select convert(nvarchar(10),commentDate,101) as postedDate,username,commentText from comments where adid=@Adid and category=@Category order by commentDate desc";
+            String query = "Select convert(nvarchar(10),commentDate,101) as postedDate,username,commentText,adid from comments where adid=@Adid and category=@Category order by commentDate desc";
             SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@Adid", adid);
             command.Parameters.AddWithValue("@Category", category);
@@ -1369,7 +1370,7 @@ namespace WebApplication4
             {
                 while (reader.Read())
                 {
-                    AllComments.Rows.Add(reader["postedDate"], reader["username"],reader["commentText"]);
+                    AllComments.Rows.Add(reader["postedDate"], reader["username"],reader["commentText"],reader["adid"]);
                 }
             }
             reader.Close();
@@ -1753,7 +1754,7 @@ namespace WebApplication4
             {
                 dbConnection.Open();
             }
-            String query = "Update allrating set rateValue=@Myrating where salesID=@adid and userID=@UserId and category=@SalesCategory ";
+            String query = "Update allrating set rateValue=@Myrating where salesID=@adid and username=@UserId and category=@SalesCategory ";
             SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@adid", salesID);
             command.Parameters.AddWithValue("@UserId", userID);
@@ -1769,7 +1770,7 @@ namespace WebApplication4
             {
                 dbConnection.Open();
             }
-            String query = "Insert into allrating (category,username,salesID,ratevalue) values(category=@SalesCategory,userID=@UserId,salesID=@adid, rateValue=@Myrating)";
+            String query = "Insert into allrating (category,username,salesID,ratevalue) values(@SalesCategory,@UserId,@adid,@Myrating)";
             SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@adid", salesID);
             command.Parameters.AddWithValue("@UserId", userID);
@@ -1794,6 +1795,28 @@ namespace WebApplication4
             if(reader.HasRows){
                 while(reader.Read()){
                     myrate=(Double)reader["rateValue"];
+                }
+            }
+            return myrate;
+        }
+
+        public Double GetCommentRating(int adid,String username)
+        {
+            Double myrate=0.0;
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select rateValue from where salesID=@Adid and username=@Username";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@Adid", adid);
+            command.Parameters.AddWithValue("@Username", username);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    myrate = (Double)reader["rateValue"];
                 }
             }
             return myrate;
