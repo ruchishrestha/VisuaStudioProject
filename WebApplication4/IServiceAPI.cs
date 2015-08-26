@@ -80,7 +80,7 @@ namespace WebApplication4
 
         ArrayList GetAllImages(int adid);
 
-        DataTable GetSalesList(String salesCategory);
+        DataTable GetSalesList(String salesCategory,String orderads);
 
         ArrayList GetSalesImages(int adid);
 

@@ -817,7 +817,7 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Insert into sales (username,title,ad_description,brand,model,price,salesStatus,condition,timeused,contact,averateRating,salesCategory) values (@UserName,@Title,@Description,@Brand,@Model,@Price,@SalesStatus,@Condition,@TimeUsed,@ContactNo,@Rating,@SalesCategory)";
+                String query = "Insert into sales (username,title,ad_description,brand,model,price,salesStatus,condition,timeused,contact,averageRating,salesCategory) values (@UserName,@Title,@Description,@Brand,@Model,@Price,@SalesStatus,@Condition,@TimeUsed,@ContactNo,@Rating,@SalesCategory)";
 
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
@@ -1637,8 +1637,9 @@ namespace WebApplication4
             return realestatePicURL;
         }
 
-        public DataTable GetSalesList(String salesCategory)
+        public DataTable GetSalesList(String salesCategory,String orderads)
         {
+            String query="";
             DataTable SalesList = new DataTable();
             SalesList.Columns.Add(new DataColumn("salesID",typeof(int)));
             SalesList.Columns.Add(new DataColumn("username",typeof(String)));
@@ -1653,7 +1654,16 @@ namespace WebApplication4
             {
                 dbConnection.Open();
             }
-            String query = "Select salesID,username,title,brand,model,price,salesStatus,condition,averageRating from sales where salesCategory=@SalesCategory order by ad_insertdate desc";
+            switch (orderads)
+            {
+                case "newads":
+                    query = "Select salesID,username,title,brand,model,price,salesStatus,condition,averageRating from sales where salesCategory=@SalesCategory order by ad_insertdate desc";
+                    break;
+                case "topads":
+                    query = "Select salesID,username,title,brand,model,price,salesStatus,condition,averageRating from sales where salesCategory=@SalesCategory order by averageRating desc";
+                    break;
+            }
+           
              SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@SalesCategory", salesCategory);
             SqlDataReader reader = command.ExecuteReader();
@@ -1807,7 +1817,7 @@ namespace WebApplication4
             {
                 dbConnection.Open();
             }
-            String query = "Select rateValue from where salesID=@Adid and username=@Username";
+            String query = "Select rateValue from allrating where salesID=@Adid and username=@Username";
             SqlCommand command = new SqlCommand(query, dbConnection);
             command.Parameters.AddWithValue("@Adid", adid);
             command.Parameters.AddWithValue("@Username", username);
