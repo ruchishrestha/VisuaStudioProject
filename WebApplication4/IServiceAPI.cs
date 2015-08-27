@@ -94,7 +94,7 @@ namespace WebApplication4
 
         Double GetCommentRating(int adid,String username);
 
-
+        DataTable GetContactsForMap(String category);
       
     }
 }

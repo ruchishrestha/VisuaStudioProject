@@ -1855,5 +1855,56 @@ namespace WebApplication4
             }
             return myrate;
         }
+
+        public DataTable GetContactsForMap(String category)
+        {
+            String query1 = null;
+            DataTable ContactsList = new DataTable();
+            ContactsList.Columns.Add(new DataColumn("adid", typeof(int)));
+            ContactsList.Columns.Add(new DataColumn("photoURL", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("Category", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("title", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("addres", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("contact", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("mobile", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("latitude", typeof(Double)));
+            ContactsList.Columns.Add(new DataColumn("longitude", typeof(Double)));
+
+
+
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+
+            switch (category)
+            {
+                case "contacts":
+                    query1 = "Select adid,photoURL,Category,title,addres,contact,mobile,latitude,longitude from contacts";
+                    break;
+                case "wanted":
+                    query1 = "Select adid,photoURL,Category,title,addres,contact,mobile,latitude,longitude from wanted";
+                    break;
+                default:
+                    break;
+            }
+
+
+            SqlCommand command = new SqlCommand(query1, dbConnection);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    ContactsList.Rows.Add(reader["adid"], reader["photoURL"], reader["Category"], reader["title"], reader["addres"], reader["contact"], reader["mobile"],reader["latitude"],reader["longitude"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return ContactsList;
+
+        }
     }
 }
