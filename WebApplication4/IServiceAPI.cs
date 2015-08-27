@@ -10,7 +10,7 @@ namespace WebApplication4
     public interface IServiceAPI
     {
         // Saten
-      String CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePictureURL);
+        String CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePictureURL);
         
         String CreateOrganizationProfile(String userName, String passWord, String organizationName, String registrationNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture);
 
@@ -38,11 +38,13 @@ namespace WebApplication4
 
         String AddSalesAds(String userName, String title, String description, String brand, String model, String price, String salesStatus, String condition, String timeUsed, String contactNo, String avgRating, String salesCategory);
 
-        String AddtoSalesGallery(String salesId, String SalesCategory , String[] pictureURL);
+        String AddtoSalesGallery(String salesId, String salesCategory , String[] pictureURL);
          
         String AddRealEstateAds(String userName, String title, String description, String houseNo, String propertyType, String saleType, String price, String aDdress, String contactNo, String mobileNo, Double latitude, Double longitude);
 
-        String AddtoRealEstateGallery(String realId, String[] pictureURL); 
+        String AddtoRealEstateGallery(String realId, String[] pictureURL);
+
+        DataTable GetPropertyType();
         
         String AddJobAds(String userName, String jobTitle, String jobDescription, String responsibility, String skills, String jobCategory, String jobTiming, String vacancy, String salary, String aDdress, String contactNo, String emailId, String webSite, Double latitude, Double longitude, String organizationLogoURL);
 

@@ -840,7 +840,7 @@ namespace WebApplication4
             }
             catch (Exception e)
             {
-                result = "Failure";
+                result = "Failure "+e;
             }
 
             return result;
@@ -1027,6 +1027,30 @@ namespace WebApplication4
             dbConnection.Close();
 
             return adID;
+        }
+
+        public DataTable GetPropertyType()
+        {
+            DataTable propertyType = new DataTable();
+            propertyType.Columns.Add(new DataColumn("propertyType", typeof(String)));
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select propertyType from realestate_propertytype";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    propertyType.Rows.Add(reader["propertyType"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+
+            return propertyType;
         }
 
         public String AddJobAds(String userName, String jobTitle, String jobDescription, String responsibility, String skills, String jobCategory, String jobTiming, String vacancy, String salary, String aDdress, String contactNo, String emailId, String webSite, Double latitude, Double longitude, String organizationLogoURL)
