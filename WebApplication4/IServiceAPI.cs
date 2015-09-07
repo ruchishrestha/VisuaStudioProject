@@ -10,6 +10,8 @@ namespace WebApplication4
     public interface IServiceAPI
     {
         // Saten
+        DataTable MyFullTextSearcher(String myQuery);
+
         String CreateIndividualProfile(String userName, String passWord, String firstName, String middleName, String lastName, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, String profilePictureURL);
         
         String CreateOrganizationProfile(String userName, String passWord, String organizationName, String registrationNo, String aDdress, String contactNo, String mobileNo, String emailId, String webSite, Double latitude, Double longitude, String organizationPicture);

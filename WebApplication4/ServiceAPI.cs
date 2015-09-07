@@ -1,10 +1,33 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Configuration;
+using System.Threading;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.StorageClient;
+using Lucene.Net;
+using Lucene.Net.Store;
+using Lucene.Net.Index;
+using Lucene.Net.Documents;
+using Lucene.Net.Util;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Search;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Search.Similar;
+using System.Diagnostics;
+using System.ComponentModel;
+using Lucene.Net.Store.Azure;
+using Microsoft.WindowsAzure.ServiceRuntime;
+
+
 
 namespace WebApplication4
 {
@@ -18,6 +41,147 @@ namespace WebApplication4
         }
 
         // Saten
+
+        public String CreateMyIndexDoc() {
+            String status = "";
+            try
+            {
+
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String storageConnectionString =
+                     "DefaultEndpointsProtocol=https;"
+                   + "AccountName=classifiedfilestorage;"
+                   + "AccountKey=P/GSa/P8vmBicBT45Jgv7pmRHdYWYfJeTFJ963Q1aEHlJDZBCzYkTBcjH1JoGgl+k34x9koBW4lsgYhCym0JLQ==";
+
+
+                CloudStorageAccount cloudAccount = CloudStorageAccount.Parse(storageConnectionString);
+
+                var cacheDirectory = new RAMDirectory();
+                AzureDirectory azureDirectory = new AzureDirectory(cloudAccount, "JobCat",cacheDirectory);
+                bool findexExists = IndexReader.IndexExists(azureDirectory);
+
+                IndexWriter indexWriter = null;
+                while (indexWriter == null)
+                {
+                    try
+                    {
+                        indexWriter = new IndexWriter(azureDirectory, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30),findexExists, new Lucene.Net.Index.IndexWriter.MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH));
+                    }
+                    catch (LockObtainFailedException)
+                    {                    
+                        Thread.Sleep(1000);
+                    }
+                };
+
+                indexWriter.SetRAMBufferSizeMB(10.0);
+               
+                String query = "SELECT jobID,title,jobCategory from jobs";
+
+                SqlCommand command = new SqlCommand(query, dbConnection);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows) {
+
+                    while (reader.Read())
+                    {
+                        Document docx = new Document();
+                        docx.Add(new Field("jobID", reader["jobID"].ToString(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO));
+                        docx.Add(new Field("title", reader["title"].ToString(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO));
+                        docx.Add(new Field("jobCategory", reader["jobCategory"].ToString(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.NO));
+                        indexWriter.AddDocument(docx);
+                    }
+                }
+
+                indexWriter.Close();
+
+                dbConnection.Close();
+
+                status = "Success";
+            }
+            catch (Exception e) {
+                status = "" + e;
+            }
+
+            return status;
+
+        }
+
+
+        public DataTable MyFullTextSearcher(String myQuery) {
+
+            DataTable dochits = new DataTable();
+            dochits.Columns.Add(new DataColumn("MyUserName", typeof(String)));
+
+            String result = CreateMyIndexDoc();
+            
+            // Create the AzureDirectory for blob storage 
+            try
+            {
+                dochits.Rows.Add(result);
+
+                String storageConnectionString =
+                     "DefaultEndpointsProtocol=https;"
+                   + "AccountName=classifiedfilestorage;"
+                   + "AccountKey=P/GSa/P8vmBicBT45Jgv7pmRHdYWYfJeTFJ963Q1aEHlJDZBCzYkTBcjH1JoGgl+k34x9koBW4lsgYhCym0JLQ==";
+                
+                
+                CloudStorageAccount cloudAccount = CloudStorageAccount.Parse(storageConnectionString);
+
+                var cacheDirectory = new RAMDirectory();
+                AzureDirectory azureDirectory = new AzureDirectory(cloudAccount, "JobCat",cacheDirectory);
+
+                // Create the IndexSearcher 
+
+                //IndexReader indexReader = DirectoryReader.Open(azureDirectory,true);
+
+                IndexSearcher indexSearcher = new IndexSearcher(azureDirectory);
+
+                // Create the QueryParser
+
+                //MoreLikeThisQuery mltq = new MoreLikeThisQuery(myQuery, new String[] { "title", "jobCategory" }, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+                //MoreLikeThis mlt = new MoreLikeThis(indexReader);
+                //mlt.SetFieldNames(new String[] { "title", "jobCategory" });
+                //mlt.MinDocFreq = MoreLikeThis.DEFAULT_MIN_DOC_FREQ;
+                //mlt.MinTermFreq = MoreLikeThis.DEFAULT_MIN_TERM_FREQ;
+
+                //TextReader reader = new StringReader(myQuery);
+
+                //Query query = mlt.Like(reader);
+
+                MultiFieldQueryParser parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, new String[] { "title", "jobCategory" }, new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+                
+                // Create a query from the Parser 
+
+                Query query = parser.Parse(myQuery+"*");
+
+                // Retrieve matching hits                 
+               
+                var hits = indexSearcher.Search(query, 100);
+   
+
+                // Loop through the matching hits, retrieving the document 
+
+                for (int i = 0; i < hits.TotalHits; i++)
+                {
+                    Document doc = indexSearcher.Doc(hits.ScoreDocs[i].Doc);
+                    dochits.Rows.Add(doc.Get("jobID"));
+                }
+
+               // indexReader.Dispose();
+
+            }
+            catch (Exception e) { 
+                result = "" + e;
+                dochits.Rows.Add(result);
+            }            
+
+            return dochits;
+        }       
 
         public bool CheckUserName(String userName)
         {
@@ -1064,7 +1228,7 @@ namespace WebApplication4
                     dbConnection.Open();
                 }
 
-                String query = "Insert into jobs (username,title,ad_description,responsibility,skills,jobCategory,jobTime,vaccancyNo,salary,addres,contact,email,webSite,latitude,longitude,logoURL) values (@UserName,@JobTitle,@JobDescription,@Responsibilty,@Skills,@JobCategory,@JobTiming,@Vacancy,@Salary,@Address,@ContactNo,@EmailID,@Website,@Latitude,@Longitude,@LogoURL)";
+                String query = "Insert into jobs (username,title,ad_description,responsibility,skills,jobCategory,jobTime,vaccancyNo,salary,addres,contact,email,website,latitude,longitude,logoURL) values (@UserName,@JobTitle,@JobDescription,@Responsibilty,@Skills,@JobCategory,@JobTiming,@Vacancy,@Salary,@Address,@ContactNo,@EmailID,@Website,@Latitude,@Longitude,@LogoURL)";
 
                 SqlCommand command = new SqlCommand(query, dbConnection);
                 command.Parameters.AddWithValue("@UserName", userName);
@@ -1092,7 +1256,7 @@ namespace WebApplication4
             }
             catch (Exception e)
             {
-                result = "Failure";
+                result = "Failure: "+e;
             }
 
             return result;

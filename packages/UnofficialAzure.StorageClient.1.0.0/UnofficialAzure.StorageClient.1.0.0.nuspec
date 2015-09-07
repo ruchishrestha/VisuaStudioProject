@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>UnofficialAzure.StorageClient</id>
+    <version>1.0.0</version>
+    <title>Unofficial Microsoft.WindowsAzure.StorageClient.dll</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Includes the file Microsoft.WindowsAzure.StorageClient.dll v1.7 which is sometimes required by legacy code.</description>
+  </metadata>
+</package>
