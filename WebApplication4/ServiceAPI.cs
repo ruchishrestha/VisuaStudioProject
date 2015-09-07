@@ -1220,7 +1220,7 @@ namespace WebApplication4
             return SalesDetailTable;
         }
 
-        public void DeleteSalesAd(String adid)
+        public void DeleteSalesAd(int adid,String category)
         {
             if (dbConnection.State.ToString() == "Closed")
             {
@@ -1231,6 +1231,7 @@ namespace WebApplication4
             command.Parameters.AddWithValue("@adid", adid);
             command.ExecuteNonQuery();
             dbConnection.Close();
+            deletefromcomments(adid, category);
         }
 
 
@@ -1905,6 +1906,239 @@ namespace WebApplication4
             dbConnection.Close();
             return ContactsList;
 
+        }
+
+        public String GetUserCategory(String username)
+        {
+            String userCategory = "";
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            String query = "Select userCategory from allUsersTable where userName=@Username";
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@Username", username);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    userCategory = reader["userCategory"].ToString();
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return userCategory;
+        }
+
+        public DataTable GetMyContactsList(String userID, String category)
+        {
+            String query1 = null;
+            DataTable ContactsList = new DataTable();
+            ContactsList.Columns.Add(new DataColumn("adid", typeof(int)));
+            ContactsList.Columns.Add(new DataColumn("photoURL", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("username", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("title", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("addres", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("contact", typeof(String)));
+            ContactsList.Columns.Add(new DataColumn("mobile", typeof(String)));
+
+
+
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+
+            switch (category)
+            {
+                case "contacts":
+                    query1 = "Select adid,photoURL,username,title,addres,contact,mobile from contacts where username=@userID order by ad_insertdate desc";
+                    break;
+                case "wanted":
+                    query1 = "Select adid,photoURL,username,title,addres,contact,mobile from wanted where username=@userID order by ad_insertdate desc";
+                    break;
+                default:
+                    break;
+            }
+
+
+            SqlCommand command = new SqlCommand(query1, dbConnection);
+            command.Parameters.AddWithValue("@userID", userID);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    ContactsList.Rows.Add(reader["adid"], reader["photoURL"], reader["username"], reader["title"], reader["addres"], reader["contact"], reader["mobile"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return ContactsList;
+
+        }
+
+        public void DeleteContactsWantedAd(int adid, String category)
+        {
+            String query ="";
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            switch (category)
+            {
+                case "contacts":
+                   query = "Delete from contacts where adid=@adid";
+                   break;
+                case "wanted":
+                     query = "Delete from wanted where adid=@adid";
+                   break;
+                default:
+                   break;
+            }
+            
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", adid);
+            command.ExecuteNonQuery();
+            dbConnection.Close();
+            deletefromcomments(adid, category);
+        }
+
+        public void deletefromcomments(int adid, String category)
+        {
+            String query = "";
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            query = "Delete from comments where adid=@adid and category=@category";
+            
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", adid);
+            command.Parameters.AddWithValue("@category", category);
+            command.ExecuteNonQuery();
+            dbConnection.Close();
+            deletefromwatchlist(adid,category);
+        }
+
+        public void deletefromwatchlist(int adid, String category)
+        {
+            String query = "";
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+            query = "Delete from watchlist where adid=@adid and category=@category";
+
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@adid", adid);
+            command.Parameters.AddWithValue("@category", category);
+            command.ExecuteNonQuery();
+            dbConnection.Close();
+        }
+
+        public void UpdateContactsAds(int adid,String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL)
+        {
+          
+            try
+            {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String query = "Update contacts set title=@Title,ad_description=@Description ,Category=@Category ,addres=@Address ,contact=@ContactNo ,mobile=@MobileNo,email=@EmailID ,latitude=@Latitude ,longitude=@Longitude ,photoURL=@PictureURL where adid=@Adid ";
+               
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@Adid", adid);
+                command.Parameters.AddWithValue("@Title", title);
+                command.Parameters.AddWithValue("@Description", description);
+                command.Parameters.AddWithValue("@Category", category);
+                command.Parameters.AddWithValue("@Address", aDdress);
+                command.Parameters.AddWithValue("@ContactNo", contactNo);
+                command.Parameters.AddWithValue("@MobileNo", mobileNo);
+                command.Parameters.AddWithValue("@EmailID", emailId);
+                command.Parameters.AddWithValue("@Latitude", latitude);
+                command.Parameters.AddWithValue("@Longitude", longitude);
+                command.Parameters.AddWithValue("@PictureURL", picURL);
+                command.ExecuteNonQuery();
+
+                dbConnection.Close();
+                           
+            }
+            catch (Exception e)
+            {
+                
+            }
+
+          
+        }
+
+        public void UpdateWantedAds(int adid, String title, String description, String category, String aDdress, String contactNo, String mobileNo, String emailId, Double latitude, Double longitude, String picURL)
+        {
+                if (dbConnection.State.ToString() == "Closed")
+                {
+                    dbConnection.Open();
+                }
+
+                String query = "Update wanted set title=@Title,ad_description=@Description ,Category=@Category ,addres=@Address ,contact=@ContactNo ,mobile=@MobileNo,email=@EmailID ,latitude=@Latitude ,longitude=@Longitude ,photoURL=@PictureURL where adid=@Adid ";
+
+                SqlCommand command = new SqlCommand(query, dbConnection);
+                command.Parameters.AddWithValue("@Adid", adid);
+                command.Parameters.AddWithValue("@Title", title);
+                command.Parameters.AddWithValue("@Description", description);
+                command.Parameters.AddWithValue("@Category", category);
+                command.Parameters.AddWithValue("@Address", aDdress);
+                command.Parameters.AddWithValue("@ContactNo", contactNo);
+                command.Parameters.AddWithValue("@MobileNo", mobileNo);
+                command.Parameters.AddWithValue("@EmailID", emailId);
+                command.Parameters.AddWithValue("@Latitude", latitude);
+                command.Parameters.AddWithValue("@Longitude", longitude);
+                command.Parameters.AddWithValue("@PictureURL", picURL);
+                command.ExecuteNonQuery();
+
+                dbConnection.Close();
+          }
+
+        public DataTable GetMySalesList(String userID)
+        {
+            String query = "";
+            DataTable SalesList = new DataTable();
+            SalesList.Columns.Add(new DataColumn("salesID", typeof(int)));
+            SalesList.Columns.Add(new DataColumn("username", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("title", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("brand", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("model", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("price", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("salesStatus", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("condition", typeof(String)));
+            SalesList.Columns.Add(new DataColumn("averageRating", typeof(Double)));
+            SalesList.Columns.Add(new DataColumn("salesCategory", typeof(String)));
+            if (dbConnection.State.ToString() == "Closed")
+            {
+                dbConnection.Open();
+            }
+           
+          
+                    query = "Select salesID,username,title,brand,model,price,salesStatus,condition,averageRating,salesCategory from sales where username=@userID order by ad_insertdate desc";
+                  
+            SqlCommand command = new SqlCommand(query, dbConnection);
+            command.Parameters.AddWithValue("@userID", userID);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    SalesList.Rows.Add(reader["salesID"], reader["username"], reader["title"], reader["brand"], reader["model"], reader["price"], reader["salesStatus"], reader["condition"], reader["averageRating"],reader["salesCategory"]);
+                }
+            }
+            reader.Close();
+            dbConnection.Close();
+            return SalesList;
         }
     }
 }
